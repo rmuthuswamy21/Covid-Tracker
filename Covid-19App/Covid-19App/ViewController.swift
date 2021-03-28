@@ -32,11 +32,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         })
         
         self.covidTableView.backgroundColor = .black
-            
+        let image = UIImage(named: "image")
+        let imageView = UIImageView(image: image)
+        imageView.contentMode = .scaleAspectFill
+        self.covidTableView.backgroundView = imageView
+        
+        
         searchBar.searchTextField.textColor = .white
         searchBar.searchTextField.backgroundColor = .darkGray
         searchBar.delegate = self
         searchBar.searchTextField.returnKeyType = .done
+        
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -52,11 +59,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let covidData = searchList ? filterList[indexPath.row] : data[indexPath.row]
         
         let cell =  tableView.dequeueReusableCell(withIdentifier: "cell")!
-        cell.textLabel?.text = covidData.stateName
-        let posIncrease = covidData.positiveIncrease ?? 0
-        cell.detailTextLabel?.text = "+\(posIncrease)"
-        cell.detailTextLabel?.textColor = posIncrease > 1000 ? .systemRed : .systemGreen
-        cell.textLabel?.textColor = .white
+        cell.decorateCell(covidData: covidData)
  
         return cell
     }
@@ -129,18 +132,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         for covidModel in data {
             sum += covidModel.positive ?? 0
         }
-        
+
         return Double(sum/data.count)
-        
     }
     
     
-    
-    
-    
-    
-  
+}
 
-    
+extension UITableViewCell {
+    func decorateCell(covidData: StateCovidModel) {
+        textLabel?.text = covidData.stateName
+        let posIncrease = covidData.positiveIncrease ?? 0
+        detailTextLabel?.text = "+\(posIncrease)"
+        detailTextLabel?.textColor = posIncrease > 1000 ? .systemRed : .systemGreen
+        textLabel?.textColor = .white
+        textLabel?.font = UIFont.boldSystemFont(ofSize: 25)
+        detailTextLabel?.font = UIFont.boldSystemFont(ofSize: 25)
+    }
 }
 
