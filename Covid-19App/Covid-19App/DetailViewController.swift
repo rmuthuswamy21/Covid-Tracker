@@ -11,36 +11,58 @@ import SwiftCharts
 
 class DetailViewController: UIViewController {
     var covidStateModel: StateCovidModel?
+    var averageCases = 0.0
+    
     var chart: BarsChart?
+    var cases: Double = 0.0
+    var casesBefore:Double = 0.0
+    var deathsBefore:Double = 0.0
+    var deaths:Double = 0.0
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         drawChart()
     }
+    func calculateMax() -> Double {
+        var maximum = max(averageCases, cases)
+        maximum = ceil (maximum/100) * 100
+        
+        return maximum
+        
+    }
     
     func drawChart() {
+        cases = Double(covidStateModel?.positive ?? 0)
+        deaths = Double(covidStateModel?.death ?? 0)
+        let max = calculateMax()
+        let by = ceil (max/100) * 10
+        print(by)
+        
         let chartConfig = BarsChartConfig(
-            valsAxisConfig: ChartAxisConfig(from: 0, to: 8, by: 2)
+            valsAxisConfig: ChartAxisConfig(from: 0, to: max + by, by: by)
         )
 
         let frame = CGRect(x: 0, y: 70, width: UIScreen.main.bounds.width, height: 500)
-                
+        
+        
         let chart = BarsChart(
             frame: frame,
             chartConfig: chartConfig,
-            xTitle: "X axis",
-            yTitle: "Y axis",
+            xTitle: "State: \(stateNameConversion[covidStateModel?.state ?? " "] ?? " ")",
+            yTitle: "Number of Positive Cases",
             bars: [
-                ("A", 2),
-                ("B", 4.5),
-                ("C", 3),
-                ("D", 5.4),
-                ("E", 6.8),
-                ("F", 0.5)
+                
+                
+                ("Average", averageCases),
+                ("Cases-Current", (cases) ),
+                
+                
             ],
             color: UIColor.red,
-            barWidth: 20
+            barWidth: 50
         )
 
         self.view.addSubview(chart.view)

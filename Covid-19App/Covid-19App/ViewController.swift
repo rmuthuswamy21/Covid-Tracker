@@ -15,6 +15,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     var filterList = [StateCovidModel]()
     var searchList:Bool = false
     var selectedCovidStateModel: StateCovidModel?
+    var avgCases = 0.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +25,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         NetworkAPICall().makeCall(completion: {list in
           DispatchQueue.main.async {
                 self.data = list
+                self.avgCases = self.getAverage(of: list)
                 self.covidTableView.reloadData()
            }
             
@@ -112,12 +114,24 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         covidTableView.reloadData()
     }
     
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? DetailViewController {
             destination.covidStateModel = selectedCovidStateModel
+            destination.averageCases = avgCases
         }
         
             navigationController?.navigationBar.isHidden = false
+    }
+    
+    private func getAverage(of data: [StateCovidModel]) -> Double {
+        var sum = 0
+        for covidModel in data {
+            sum += covidModel.positive ?? 0
+        }
+        
+        return Double(sum/data.count)
+        
     }
     
     

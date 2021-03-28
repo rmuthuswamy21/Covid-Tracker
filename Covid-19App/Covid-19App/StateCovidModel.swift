@@ -15,6 +15,9 @@ struct StateCovidModel: Decodable {
     var death: Int?
     var positiveIncrease: Int?
     var negativeIncrease:Int?
+    var deathIncrease: Int?
+    var recovered: Int?
+    
     
     var stateName: String {
         guard let state = state else {
